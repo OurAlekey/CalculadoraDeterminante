@@ -10,6 +10,7 @@ import {
   Grid,
   TextField,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import BackspaceOutlinedIcon from "@mui/icons-material/BackspaceOutlined";
 import CalculateOutlinedIcon from "@mui/icons-material/CalculateOutlined";
@@ -17,7 +18,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RemoveOutlinedIcon from "@mui/icons-material/RemoveOutlined";
 
 import "katex/dist/katex.min.css";
-import {  BlockMath } from "react-katex";
+import { BlockMath } from "react-katex";
 
 function App() {
   const [matrix, setMatrix] = useState([
@@ -29,6 +30,7 @@ function App() {
   const [steps, setSteps] = useState("");
   const [sizeElement, setSize] = useState(matrix.length);
   const [stepsFinally, setStepsFinally] = useState("");
+  const isMobile = useMediaQuery("(max-width:700px)");
   const handleChange = (e, row, col) => {
     const newMatrix = [...matrix];
     newMatrix[row][col] = e.target.value;
@@ -113,18 +115,18 @@ function App() {
       const subMatrix = matrix
         .slice(1)
         .map((row) => row.filter((_, c) => c !== col));
-      const sign = col % 2 === 0 ? 1 : -1; 
-      const subDet = calculateDeterminantGeneral(subMatrix); 
-      const partialDet = sign * matrix[0][col] * subDet.det; 
+      const sign = col % 2 === 0 ? 1 : -1;
+      const subDet = calculateDeterminantGeneral(subMatrix);
+      const partialDet = sign * matrix[0][col] * subDet.det;
       const subMatrixString = subMatrix
         .map((row) => row.join(" & "))
         .join(" \\\\ "); // Formato LaTeX
       stepsArray.push(
         `(${sign === 1 ? "" : "-"}${matrix[0][col]}*${subDet.det})`
       );
-      det += partialDet; 
+      det += partialDet;
     }
- 
+
     const finalDet = det;
     steps = stepsArray.join(" + ") + ` = ${finalDet}`;
     return { det: finalDet, steps };
@@ -150,7 +152,6 @@ function App() {
       setDet(det);
       setSteps(steps);
     } catch (error) {
-     
       setDet("Matriz inválida");
     }
   };
@@ -203,36 +204,45 @@ function App() {
 
               <Container sx={{ mt: 2 }}>
                 <Divider textAlign="left">
-                  <Typography variant="h5">Intrudezca la Matriz</Typography>
+                  <Typography variant="h5">Introduzca la Matriz</Typography>
                 </Divider>
-
-                {matrix.map((row, rowIndex) => (
-                  <Grid
-                    container
-                    spacing={1}
-                    sx={{
-                      textAlign: "center",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-
-                      mt: 1,
-                    }}
-                  >
-                    {row.map((cell, colIndex) => (
-                      <Grid item xs={1} key={`${rowIndex}-${colIndex}`}>
-                        <TextField
-                          size="small"
-                          label={`${rowIndex + 1},${colIndex + 1}`}
-                          value={cell}
-                          onChange={(e) => handleChange(e, rowIndex, colIndex)}
-                          fullWidth
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
-                ))}
-
+                <div style={{  overflowX: "scroll" }}>
+                <div style={{ width: "800px" }}>
+                  {matrix.map((row, rowIndex) => (
+                    <Grid
+                      container
+                      spacing={1}
+                      sx={{
+                        textAlign: "center",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mt: 0.1,
+                        overflowX: "scroll"
+                      }}
+                    >
+                      {row.map((cell, colIndex) => (
+                        <Grid
+                          item
+                          xs={ 1}
+                          key={`${rowIndex}-${colIndex}`}
+                        >
+                          <TextField
+                            autoComplete="off"
+                            size="small"
+                            label={`${rowIndex + 1},${colIndex + 1}`}
+                            value={cell}
+                            onChange={(e) =>
+                              handleChange(e, rowIndex, colIndex)
+                            }
+                            fullWidth
+                          />
+                        </Grid>
+                      ))}
+                    </Grid>
+                  ))}
+                        </div>
+                </div>
                 <div
                   style={{
                     display: "flex",
@@ -241,7 +251,7 @@ function App() {
                 >
                   <div style={{ flex: 1 }}>
                     <Divider textAlign="left">
-                      <Typography variant="h5">Filas</Typography>
+                      <Typography variant="h5">Tamaño</Typography>
                     </Divider>
 
                     <Button
@@ -249,11 +259,12 @@ function App() {
                       startIcon={<AddOutlinedIcon />}
                       color="primary"
                       onClick={nuevoFila}
-                      sx={{ mr: 2 }}
+                      sx={{ mt: 2, mr: 2 }}
                     >
                       Agregar
                     </Button>
                     <Button
+                      sx={{ mt: 2 }}
                       disabled={matrix.length === 2}
                       onClick={eliminarFila}
                       variant="outlined"
@@ -294,12 +305,12 @@ function App() {
                   <Typography variant="h5" style={{ marginTop: "20px" }}>
                     Pasos:
                   </Typography>
-                  <Box sx={{ mt: 2 }}>
+                  <Box sx={{ mt: 2, overflowX: "auto" }}>
                     {steps.split("\\\\ \\\\").map((step, index) => (
                       <BlockMath key={index}>{step}</BlockMath>
                     ))}
                   </Box>
-                  <Box sx={{ mt: 2 }}>
+                  <Box sx={{ mt: 2, overflowX: "auto" }}>
                     <Typography variant="h6">Resultado final</Typography>{" "}
                     <BlockMath>{stepsFinally}</BlockMath>
                   </Box>
