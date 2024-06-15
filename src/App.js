@@ -179,6 +179,7 @@ function App() {
     setSteps("");
     setStepsFinally("");
   };
+  const latexString = 'C_{ij} = (-1)^{i+j} M_{ij}';
 
   return (
     <CssBaseline>
@@ -201,13 +202,33 @@ function App() {
                 importante sobre la matriz y sus transformaciones lineales
                 asociadas.
               </Typography>
+              
+              <Typography variant="h5" sx={{ mt: 2 }}>
+                ¿Qué es una adjunta?
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+              Una adjunta se utiliza en el calculo de las determinantes, y tiene el mismo valos numerico que el menor pero puede tener un signo diferente
+              se expresa como :<BlockMath math={latexString} />
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                <b style={{fontSize:"18px"}}>i </b>   es el indice de la fila.
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+              <b style={{fontSize:"18px"}}>j </b>    es el indice de la columna.
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+              <b style={{fontSize:"18px"}}>C</b><b style={{fontSize:"15px"}}>ij</b> es el adjunto correspondiente a la i-esima fila y a la j-esima columna.
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+              <b style={{fontSize:"18px"}}>M</b><b style={{fontSize:"15px"}}>ij</b> es el menor correspondiente a la i-esima fila y a la j-esima columna.
+              </Typography>
 
               <Container sx={{ mt: 2 }}>
                 <Divider textAlign="left">
                   <Typography variant="h5">Introduzca la Matriz</Typography>
                 </Divider>
-                <div style={{  overflowX: "scroll" }}>
-                <div style={{ width: "800px" }}>
+                <div style={{  overflowX: isMobile ?"scroll" :""}}>
+                <div style={{ width: isMobile ? "800px" :""}}>
                   {matrix.map((row, rowIndex) => (
                     <Grid
                       container
@@ -218,7 +239,7 @@ function App() {
                         alignItems: "center",
                         justifyContent: "center",
                         mt: 0.1,
-                        overflowX: "scroll"
+                      
                       }}
                     >
                       {row.map((cell, colIndex) => (
@@ -230,7 +251,7 @@ function App() {
                           <TextField
                             autoComplete="off"
                             size="small"
-                            label={`${rowIndex + 1},${colIndex + 1}`}
+                            label={`(i${rowIndex + 1},j${colIndex + 1})`}
                             value={cell}
                             onChange={(e) =>
                               handleChange(e, rowIndex, colIndex)
